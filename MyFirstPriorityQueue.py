@@ -18,7 +18,11 @@ class MyFirstPriorityQueue:
     def __str__(self) -> str:
         """Return a user-friendly string representaiton of the class using
         f-strings."""
-        pass
+        if self.is_empty():
+            return "MyFirstPriorityQueue([])"
+        # Only show the portion of the underlying list that has elements
+        elements = self._underlying[:self._size]
+        return f"MyFirstPriorityQueue({elements})"
 
     def __len__(self) -> int:
         """Return a non-negative integer with the number of items stored in the
