@@ -66,7 +66,7 @@ class MyFirstPriorityQueue:
         self._size += 1
         self._sift_up(self._size - 1)
 
-
+# CHECK WITH PROFESSOR ABOUT RESIZE
     def extract(self) -> int:
         """Remove and return the most important item in the queue.
 
@@ -225,9 +225,18 @@ class MyFirstPriorityQueue:
             self._sift_up(parent)
 
 
-    def print_heap(self, width=None):
+    def pretty_print(self, width: int=None):
+        """Print the queue as a pyramid to visualize the heap.
+        
+        Source:
+            https://gist.github.com/ydm/4f0c948bc0d151631621
+
+        Args:
+            width (int, optional): Determines spacing if needed. Defaults to 
+            None.
+        """
         heap = [item for item in self._underlying if item is not None]
-        first = lambda h: 2**h - 1      # H stands for level height
+        first = lambda h: 2**h - 1      
         last = lambda h: first(h + 1)
         level = lambda heap, h: heap[first(h):last(h)]
         prepare = lambda e, field: str(e).center(field)
