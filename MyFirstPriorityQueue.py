@@ -1,3 +1,4 @@
+from math import *
 class MyFirstPriorityQueue:
     """A heap-based priority queue implementation."""
 
@@ -8,7 +9,7 @@ class MyFirstPriorityQueue:
         # The underlying data structure is a list that will be maintained as a
         # heap.
         self._capacity = capacity
-        self._underlying = list[int] = [None] * self._capacity
+        self._underlying: list[int] = [None] * self._capacity
         self._size = 0
 
     def __bool__(self) -> bool:
@@ -63,7 +64,7 @@ class MyFirstPriorityQueue:
             raise Exception("Priority queue is full.")
         self._underlying[self._size] = value
         self._size += 1
-        self._sift_up()
+        self._sift_up(self._size - 1)
 
 
     def extract(self) -> int:
@@ -79,6 +80,7 @@ class MyFirstPriorityQueue:
             raise Exception("Priority queue is empty")
         most_imp = self._underlying[0]
         self._underlying[0] = self._underlying[self._size - 1]
+        self._underlying[self._size - 1] = None
         self._size -= 1
         self._sift_down(0)
         # if self._size < (self._capacity // 2):
@@ -173,7 +175,7 @@ class MyFirstPriorityQueue:
             int: index of a child's parent node
         """
         if child <= 0:
-            raise ValueError("Cannot get parent of root node.")
+            parentIndex = None
         parentIndex = (child - 1) // 2
         return parentIndex
 
@@ -190,15 +192,19 @@ class MyFirstPriorityQueue:
             root node.
         """
         left = self._left_child(parent)
-        if self._underlying[left] is not None:
+        right = self._right_child(parent)
+        largest = parent
+
+        if (left < self._size and self._underlying[left] > 
+            self._underlying[largest]):
             largest = left
-            right = self._right_child(parent)
-            if (self._underlying[right] is not None and self._underlying[right]
-                > self._underlying[left]):
+        if (right < self._size and self._underlying[right] > 
+            self._underlying[largest]):
                 largest = right
+        if largest != parent:
             self._swap(parent, largest)
             self._sift_down(largest)
-    
+        
     def _sift_up(self, child: int):
         """Move a node upward to restore the max heap property.
 
@@ -211,8 +217,27 @@ class MyFirstPriorityQueue:
             child (int): Index of the node to start at, typically the last item
             in the array.
         """
+        if child == 0:
+            return
         parent = self._parent(child)
-        if parent is not None and self._underlying[parent] is not None:
-            if self._underlying[parent] < self._underlying[child]:
-                self._swap(child, parent)
-                self._sift_up(parent)
+        if self._underlying[parent] < self._underlying[child]:
+            self._swap(child, parent)
+            self._sift_up(parent)
+
+
+    def print_heap(self, width=None):
+        heap = [item for item in self._underlying if item is not None]
+        first = lambda h: 2**h - 1      # H stands for level height
+        last = lambda h: first(h + 1)
+        level = lambda heap, h: heap[first(h):last(h)]
+        prepare = lambda e, field: str(e).center(field)
+        if width is None:
+            width = max(len(str(e)) for e in heap)
+        height = int(log(len(heap), 2)) + 1
+        gap = ' ' * width
+        for h in range(height):
+            below = 2 ** (height - h - 1)
+            field = (2 * below - 1) * width
+            print(gap.join(prepare(e, field) for e in level(heap, h)))
+        print()
+        print("----------------------------")
