@@ -1,0 +1,15 @@
+The biggest difference between the two classes is that mine, uses a fixed size
+allocation for the underlying array while the AI's class uses a dynamic python
+list. They both work well in this situation but in terms of scalability and 
+universality i think mine is better. It would be even better if i had
+implemented some sort of dynamic resizing but for the sake of the assignment
+it was not necesarry. Additionally the AI class tracks the size just using 
+len(self.underlying) but mine tracks it manually. The biggest difference i would
+say is in the heap maintaince methods. The AI class does not correctly maintain
+the heap, it only checks the immediate relationships between parent and child
+not checking it recursively. The AI peek_next method does not correctly get the
+second most important either, it just gets the item at index 1 which is not
+always the second most important. Finally, the AI class works has at worst
+O(n) time in the extraction method, O(1) add, and O(1) peek. WHile that sounds
+good for th add algorithm, it doesnt correctly maintain the heap. Mine however
+has add and extract in O(log(n)) time and an O(1) peek time.

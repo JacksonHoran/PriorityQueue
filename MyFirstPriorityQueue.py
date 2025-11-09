@@ -6,14 +6,13 @@ class MyFirstPriorityQueue:
 
     def __init__(self, capacity:int = DEFAULT_CAPACITY):
         """Initialize an empty priority queue."""
-        # The underlying data structure is a list that will be maintained as a
-        # heap.
+
         self._capacity = capacity
         self._underlying: list[int] = [None] * self._capacity
         self._size = 0
 
     def __bool__(self) -> bool:
-        """Returns False if the queue is empty.  """
+        """Returns False if the queue is empty. """
         return not self.is_empty()
 
     def __str__(self) -> str:
@@ -21,7 +20,6 @@ class MyFirstPriorityQueue:
         f-strings."""
         if self.is_empty():
             return "MyFirstPriorityQueue([])"
-        # Only show the portion of the underlying list that has elements
         elements = self._underlying[:self._size]
         return f"MyFirstPriorityQueue({elements})"
 
@@ -66,7 +64,6 @@ class MyFirstPriorityQueue:
         self._size += 1
         self._sift_up(self._size - 1)
 
-# CHECK WITH PROFESSOR ABOUT RESIZE
     def extract(self) -> int:
         """Remove and return the most important item in the queue.
 
@@ -77,15 +74,12 @@ class MyFirstPriorityQueue:
             int: The most important item in the priority queue.
         """
         if self.is_empty():
-            raise Exception("Priority queue is empty")
+            raise IndexError("Priority queue is empty")
         most_imp = self._underlying[0]
         self._underlying[0] = self._underlying[self._size - 1]
         self._underlying[self._size - 1] = None
         self._size -= 1
         self._sift_down(0)
-        # if self._size < (self._capacity // 2):
-        #     temp = [item for item in self._underlying if item is not None]
-        #     self._underlying = temp
         return most_imp
 
     def peek(self) -> int:
@@ -112,8 +106,8 @@ class MyFirstPriorityQueue:
         Returns:
             int: Second most important value in priority queue.
         """
-        if self.is_empty():
-            raise IndexError("Priority queue is empty.")
+        if self._size < 2:
+            raise IndexError("Not enough items to peek next.")
         left = self._left_child(0)
         right = self._right_child(0)
         return max(self._underlying[left], self._underlying[right])
@@ -133,7 +127,7 @@ class MyFirstPriorityQueue:
         """Compute and return the array index of a parent's left child.
 
         Uses the array-based heap property that a parent at index 'i' has a 
-        right child located at (2 * i + 1)
+        left child located at (2 * i + 1)
 
         Args:
             parent (int): index of parent node
@@ -176,7 +170,8 @@ class MyFirstPriorityQueue:
         """
         if child <= 0:
             parentIndex = None
-        parentIndex = (child - 1) // 2
+        else:
+            parentIndex = (child - 1) // 2
         return parentIndex
 
     def _sift_down(self, parent: int):
@@ -193,17 +188,17 @@ class MyFirstPriorityQueue:
         """
         left = self._left_child(parent)
         right = self._right_child(parent)
-        largest = parent
+        correct_parent = parent
 
         if (left < self._size and self._underlying[left] > 
-            self._underlying[largest]):
-            largest = left
+            self._underlying[correct_parent]):
+            correct_parent = left
         if (right < self._size and self._underlying[right] > 
-            self._underlying[largest]):
-                largest = right
-        if largest != parent:
-            self._swap(parent, largest)
-            self._sift_down(largest)
+            self._underlying[correct_parent]):
+                correct_parent = right
+        if correct_parent != parent:
+            self._swap(parent, correct_parent)
+            self._sift_down(correct_parent)
         
     def _sift_up(self, child: int):
         """Move a node upward to restore the max heap property.
@@ -236,6 +231,9 @@ class MyFirstPriorityQueue:
             None.
         """
         heap = [item for item in self._underlying if item is not None]
+        if not heap:
+            print("Heap is empty.")
+            return
         first = lambda h: 2**h - 1      
         last = lambda h: first(h + 1)
         level = lambda heap, h: heap[first(h):last(h)]
